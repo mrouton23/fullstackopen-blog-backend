@@ -1,37 +1,34 @@
-const express = require('express')
-const mongoose = require('mongoose')
+const app = require('./app')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
 
-const app = express()
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
+app.listen(config .PORT, () => {
+  logger.info(`Server running on port ${config .PORT}`)
 })
 
-const Blog = mongoose.model('Blog', blogSchema)
+// const app = express()
+// app.use(express.json())
 
-const mongoUrl = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoUrl, { family: 4 })
+// const unknownEndpoint = (request, response) => {
+//   response.status(404).send({ error: 'unknown endpoint' })
+// }
 
-app.use(express.json())
+// app.use(unknownEndpoint)
 
-app.get('/api/blogs', (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs)
-  })
-})
+// const errorHandler = (error, request, response, next) => {
+//   console.error(error.message)
 
-app.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body)
+//   if (error.name === 'CastError') {
+//     return response.status(400).send({ error: 'malformatted id' })
+//   } else if (error.name === 'ValidationError') {
+//     return response.status(400).json({ error: error.message })
+//   }
+//   next(error)
+// }
+// // this has to be the last loaded middleware, also all the routes should be registered before this!
+// app.use(errorHandler)
 
-  blog.save().then((result) => {
-    response.status(201).json(result)
-  })
-})
-
-const PORT = 3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+// const PORT = config.PORT
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`)
+// })
